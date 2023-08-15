@@ -57,6 +57,9 @@ const installExtensions = async () => {
 };
 
 const createWindow = async () => {
+
+  app.setName('City Mill Screen Shop');
+
   if (isDebug) {
     await installExtensions();
   }
@@ -71,13 +74,15 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728,
+    width: 1280,
+    height: 1024,
+    title: 'City Mill Screen Shop',
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
+        scrollBounce: true
     },
   });
 

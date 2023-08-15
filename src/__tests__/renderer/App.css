@@ -1,0 +1,501 @@
+/*
+ * @NOTE: Prepend a `~` to css file paths that are in your node_modules
+ *        See https://github.com/webpack-contrib/sass-loader#imports
+ */
+
+html, body {
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+ body {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  color: white;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgb(230, 163, 163);
+  font-family: sans-serif;
+}
+
+.app-container {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  top: 10px;
+  flex: 1;
+}
+
+.header {
+  background-color: #c8102e;
+  width: 100%;
+  height: 110px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.menu-img {
+  display: flex;
+  justify-content: center;
+  background-color: white;
+}
+
+.menu {
+  display: flex;
+  justify-content: space-between;
+  max-width: 700px;
+  padding: 40px;
+  width: 100%;
+  height: 100%;
+}
+
+.menu button {
+  display: relative;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #c8102e;
+  color: white;
+  font-size: 25px;
+  font-weight: bold;
+  margin: 0 30px;
+  border: black 2px solid;
+  cursor: pointer;
+  width: 250px;
+  min-height: 60px;
+}
+
+.menu h2 {
+  color: black;
+  font-size: 25px;
+  font-weight: bold;
+  margin: 20px 40px;
+}
+
+.screen-img {
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  height: 250px;
+  padding: 10px;
+}
+
+.text-field-height,
+.text-field-width {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.text-field-height input,
+.text-field-width input {
+  display: flex;
+  width: 88px;
+  height: 25px;
+  font-size: 17px;
+  margin-left: 10px;
+}
+
+.text-container {
+  color: rgb(0, 0, 0);
+}
+
+.text-container h2 {
+  margin-right: 20px;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.text-container input {
+  display: flex;
+  width: 88px;
+  height: 25px;
+  font-size: 17px;
+  margin-left: 10px;
+}
+
+button {
+  background-color: rgb(255, 255, 255);
+  padding: 10px 20px;
+  border: none;
+  appearance: none;
+  font-size: 1.3rem;
+  box-shadow: 0px 8px 28px -6px rgba(24, 39, 75, 0.12),
+    0px 18px 88px -4px rgba(24, 39, 75, 0.14);
+  transition: all ease-in 0.1s;
+  cursor: pointer;
+  width: 250px;
+}
+
+.field-container {
+  display: flex;
+  position: relative;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px;
+  min-width: 500px;
+}
+
+.field-container-dimensions {
+  display: flex;
+  position: relative;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  min-width: 500px;
+}
+
+.dd-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+}
+
+.dd-container h2 {
+  font-size: 25px;
+  font-weight: bold;
+  color: rgb(0, 0, 0);
+}
+
+.dd-wrapper {
+  position: relative;
+  max-width: 201px;
+}
+
+.dd-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(55, 121, 179, 0.801);
+  border: black 1px solid;
+  width: 200px;
+  max-height: 75px;
+  cursor: pointer;
+}
+
+.dd-header-title {
+  margin-left: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+}
+
+.dd-header p {
+  margin: 2px;
+  padding: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+}
+
+.dd-header-action {
+  width: 20px;
+  height: 20px;
+  fill: white;
+  margin-right: 10px;
+}
+
+.dd-list-item {
+  display: flex;
+}
+
+.dd-list button {
+  width: 100% + 1;
+  max-width: 200px;
+}
+
+.dd-list-item button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  box-shadow: inset 0 -1px 1px rgba(0, 0, 0, 0.2); 
+  transition: all 0.2s ease; 
+  margin-left: 1px;
+}
+
+.dd-list-item button:active {
+  box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.2);
+  transform: translateY(1px);
+}
+
+.dd-list-item button:hover {
+  background-color: rgb(175, 223, 255); 
+}
+
+.dd-list {
+  position: absolute;
+  top: 100%;
+  width: 200px;
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 1;
+  padding: 0;
+  margin: 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+.number-field-container {
+  display: flex;
+  align-items: center;
+  text-align: right;
+}
+
+.number-field input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-left: 20px;
+  width: 50px;
+  height: 25px;
+  font-size: 17px;
+}
+
+.add-order {
+  display: flex;
+}
+
+.add-order button {
+  background-color: #c8102e;
+  color: white;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: black 1px solid;
+  cursor: pointer;
+  width: 200px;
+  height: 48px;
+}
+
+.add-order button:hover {
+  background-color: #b6122a;
+}
+
+/* OrderSummary.css */
+
+.order-summary {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: calc(100vh - 480px); /* assuming this is the viewport height and 60px is the height of your footer */
+  width: 610px;
+  top: 200px;
+  padding-bottom: 50px; /* match this with your footer's height */
+}
+
+.header-info {
+  display: flex;
+  align-items: center;
+  height: 30px;
+  width: 580px;
+  padding-bottom: 10px;
+  background-color: rgb(230, 163, 163);
+  z-index: 5;
+}
+
+.header-text  {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  padding-right: 15px;
+  font-weight: bold;
+  color: black;
+}
+
+.header-info input {
+  width: 180px;
+  height: 25px;
+  font-size: 17px;
+}
+
+.header-info p {
+  font-size: 20px;
+  font-weight: bold;
+  padding-right: 10px;
+  color: black;
+}
+
+.order-summary-content {
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.order-summary-footer {
+  width: 610px;
+  position: fixed;
+  bottom: 0;
+  padding-top: 10px;
+  background-color: rgb(230, 163, 163);
+}
+
+.order-item {
+  flex: 0 0 auto; /* This ensures that the item doesn't shrink or grow */
+  margin-bottom: 20px; /* Add space between items */
+  background-color: white;
+  color: black;
+  border: black 1px solid;
+  border-radius: 5px;
+  margin: 10px;
+}
+
+.order-header {
+  background-color: #c8102e;
+  color: white;
+  height: 70px;
+  display: flex;
+  padding-left: 20px;
+}
+
+.order-text {
+  display: inline-block;
+  width: 300px;
+  padding-left: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: black;
+}
+
+.order-text p {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-text .value {
+  color: rgb(12, 0, 185);
+  width: 150px;
+  display: inline-block;
+}
+
+.order-img {
+  display: inline-block;
+  justify-content: center;
+  align-items: center;
+  width: 250px;
+}
+
+.order-dropdowns {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 10px;
+}
+
+.order-buttons {
+  width: 250px;
+  padding-left: 20px; /* Add some space to the left */
+  padding-bottom: 10px;
+}
+
+.order-buttons button {
+  background-color: rgb(166, 205, 236);
+  color: black;
+  margin-bottom: 10px; /* Add some space between the buttons */
+  width: 100px; /* Make the buttons small */
+  justify-content: space-between;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  border: black 1px solid;
+}
+
+.order-buttons button:hover {
+  background-color: rgb(175, 223, 255);
+}
+
+.order-buttons button:not(:last-child) {
+  margin-right: 30px; /* Add some space between the buttons horizontally, except for the last button */
+}
+
+.order-total {
+  margin-top: 20px;
+}
+
+.add-on-field label {
+  font-size: 18px;
+  font-weight: bold;
+  color: black;
+  padding-right: 10px;
+  flex: 1;
+}
+
+.add-on-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 610px;
+  padding-bottom: 5px;
+}
+
+.add-on-field input,
+.add-on-field .css-yk16xz-control { 
+  width: 40px;
+  height: 30px;
+  font-size: 17px;
+  margin-left: 10px;
+}
+
+.comment-box {
+  margin-bottom: 10px;
+}
+
+textarea {
+  width: 570px;
+  padding: 5px;
+  margin-left: 10px;
+  border: black 1px solid;
+  border-radius: 5px;
+  resize: none;
+}
+
+textarea:focus {
+  outline: 3px solid skyblue;
+}
+
+.summary-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.button-container button {
+  background-color:	#dbf3e1;
+  font-size: 14px;
+  font-weight: bold;
+  border: black 1px solid;
+  cursor: pointer;
+  width: 171px;
+  height: 38px;
+}
+
+.button-container button:hover {
+  background-color: #c2e2d4;
+}
+
+li {
+  list-style: none;
+}
+
+li span:first-child {
+  padding-right: 10px;
+}
