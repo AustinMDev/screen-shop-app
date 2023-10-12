@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import "./App.css";
 import NewScreenForm from "./NewScreenForm";
 import MainMenu from "./MainMenu";
+import ConfigMenu from "./ConfigMenu";
 import OrderSummary from "./OrderSummary";
 import PDFDocument from "./PDFMake";
 
@@ -132,12 +133,12 @@ export default function App() {
                 clipSpring={clipSpring}
                 setClipSpring={setClipSpring}
                 spreaderBarClips={spreaderBarClips}
-                setSpreaderBarClips={setSpreaderBarClips}
                 comment={comment}
                 setComment={setComment}
               />
             }
           />
+        <Route path="/ConfigMenu" element={ <ConfigMenu />} />
         <Route path="/PDFMake" element={<PDFDocument order={order} />} />
       </Routes>
     </Router>

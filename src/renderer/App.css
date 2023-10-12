@@ -60,12 +60,9 @@ html, body {
   justify-content: space-between;
   max-width: 700px;
   padding: 40px;
-  width: 100%;
-  height: 100%;
 }
 
 .menu button {
-  display: relative;
   justify-content: space-between;
   align-items: center;
   background-color: #c8102e;
@@ -77,6 +74,196 @@ html, body {
   cursor: pointer;
   width: 250px;
   min-height: 60px;
+}
+
+.login-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 350px;
+
+
+}
+
+.login-container button {
+  background-color: #c8102e;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  border: black 2px solid;
+  cursor: pointer;
+  width: 120px;
+  height: 45px;
+}
+
+.config {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+}
+
+.config-header {
+  background-color: #c8102e;
+  justify-content: space-between;
+  color: white;
+  display: flex;
+  width: 580px;
+  padding: 10px;
+}
+
+.config-header h3 {
+  font-size: 25px;
+  font-weight: bold;
+  color: white;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.config-header button {
+  margin: auto;
+  width: 160px;
+  height: 50px;
+  margin-right: 40px;
+  font-weight: bold;
+}
+
+.config button {
+  background-color: #c8102e;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  border: black 2px solid;
+  cursor: pointer;
+  width: 120px;
+  height: 45px;
+}
+
+.config-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.config-sections {
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  color: black;
+  max-height: 1000px;
+  border: black 2px solid;
+  margin: 10px;
+  margin-left: 25px;
+}
+
+.config-page-header  {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #b6122a;
+}
+
+.config-page-header h3  {
+  background-color: #b6122a;
+  width: auto;
+  margin: 0;
+  padding: 20px;
+  text-align: center;
+  font-size: 45px;
+}
+
+.config-page-header button {
+  width: 180px;
+  background-color:	#dbf3e1;
+  font-size: 14px;
+  font-weight: bold;
+  border: black 1px solid;
+  cursor: pointer;
+  height: 38px;
+}
+
+.config-page-header-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 610px;
+  padding: 20px;
+}
+
+.config-page-header button:hover {
+  background-color: #c2e2d4;
+}
+
+.config-element-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #c8102e;
+  width: 500px;
+  height: 60px;
+  margin-bottom: 10px;
+  border-radius: 7px;
+}
+
+.config-element {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  color: black;
+  width: 500px;
+  height: auto;
+  border: black 2px solid;
+  border-radius: 10px;
+  margin: 7px;
+}
+
+.config-element h4 {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  margin: 20px 40px;
+}
+
+.config-element label {
+  color: black;
+  font-size: 22px;
+  font-weight: bold;
+  margin: 10px 40px;
+}
+
+.config-element input {
+  font-size: 16px;
+  font-weight: bold;
+  color: black;
+  margin: 5px 20px;
+}
+
+.config-element button {
+  background-color: #c8102e;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  border: black 2px solid;
+  cursor: pointer;
+  width: 120px;
+  height: 45px;
+  margin: 10px 0px 20px 0px;
+}
+
+.config-field-element label {
+  width: 100px;
+}
+
+.config-field-element {
+  display: flex;
+  align-items: center;
 }
 
 .menu h2 {
@@ -300,7 +487,7 @@ button {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: calc(100vh - 480px); /* assuming this is the viewport height and 60px is the height of your footer */
+  height: calc(100vh - 450px); /* assuming this is the viewport height and 60px is the height of your footer */
   width: 610px;
   top: 200px;
   padding-bottom: 50px; /* match this with your footer's height */

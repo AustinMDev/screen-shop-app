@@ -6,18 +6,18 @@ import NumberField from "./NumberField";
 import ScreenConfig from "./ScreenConfig";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
-import { elementSKUs, screenPricing, splinePricing, spreaderBarPricing, pullTabPricing, hawaiiTaxRate } from '../config';
+import config from '../../config/config.json';
 
 
 function NewScreenForm( {addScreenToOrder, currentScreen, nextScreenNumber, configImages, editMode, clearOrder}) {
 
     const navigate = useNavigate();
 
-    const frameColor = Object.keys(elementSKUs.frameColor).map((color, index) => ({id: index+1, value: color}));
-    const frameType = Object.keys(elementSKUs.frameType).map((type, index) => ({id: index+1, value: type}));
-    const splineType = Object.keys(elementSKUs.splineType).map((type, index) => ({id: index+1, value: type}));
-    const screenType = screenPricing.map((type, index) => ({id: index+1, value: type.label}));
-    const pullTabOptions = pullTabPricing.map((tab, index) => ({ id: index + 1, value: tab.label }));
+    const frameColor = Object.keys(config.elementSKUs.frameColor).map((color, index) => ({id: index+1, value: color}));
+    const frameType = Object.keys(config.elementSKUs.frameType).map((type, index) => ({id: index+1, value: type}));
+    const splineType = Object.keys(config.elementSKUs.splineType).map((type, index) => ({id: index+1, value: type}));
+    const screenType = config.additionalPrices.screenPricing.map((type, index) => ({id: index+1, value: type.label}));
+    const pullTabOptions = config.additionalPrices.pullTabPricing.map((tab, index) => ({ id: index + 1, value: tab.label }));
 
     const initialFormState = currentScreen ? currentScreen : {
         height: '',
@@ -89,14 +89,16 @@ function NewScreenForm( {addScreenToOrder, currentScreen, nextScreenNumber, conf
             delete updatedFormState.pullTabQty;
         }
 
-        // Additional processing based on the selected configuration can go here
 
         // If all conditions are met, proceed to add the screen to the order
         let spreaderBar = false;
+        let spreaderBarClipQty = 0;
         let springQty = 0;
+
 
         if (formState.config.includes('Spreader Bar')) {
             spreaderBar = true;
+            spreaderBarClipQty = 2;
         }
 
         if (formState.config.includes('Springs')) {
@@ -109,6 +111,7 @@ function NewScreenForm( {addScreenToOrder, currentScreen, nextScreenNumber, conf
             configImg: formState.configImg,
             configFilePath: formState.configFilePath,
             spreaderBar: spreaderBar,
+            spreaderBarClipQty: spreaderBarClipQty,
             springQty: springQty,
         };
 
@@ -218,7 +221,7 @@ function NewScreenForm( {addScreenToOrder, currentScreen, nextScreenNumber, conf
                         min={1}
                         onChange={e => setFormState(prev => ({...prev, width: e.target.value}))}/>
                     <DropdownInput
-                        options={['1/16', '1/8', '3/16', '1/4', '5/16', '3/8', '7/16', '1/2', '9/16', '5/8', '11/16', '3/4', '13/16', '7/8', '15/16']}
+                        options={['0', '1/16', '1/8', '3/16', '1/4', '5/16', '3/8', '7/16', '1/2', '9/16', '5/8', '11/16', '3/4', '13/16', '7/8', '15/16']}
                         placeholder="Fraction"
                         value={widthFraction}
                         onChange={e => {
@@ -238,7 +241,7 @@ function NewScreenForm( {addScreenToOrder, currentScreen, nextScreenNumber, conf
                         onChange={e => setFormState(prev => ({...prev, height: e.target.value}))}
                     />
                     <DropdownInput
-                        options={['1/16', '1/8', '3/16', '1/4', '5/16', '3/8', '7/16', '1/2', '9/16', '5/8', '11/16', '3/4', '13/16', '7/8', '15/16']}
+                        options={['0', '1/16', '1/8', '3/16', '1/4', '5/16', '3/8', '7/16', '1/2', '9/16', '5/8', '11/16', '3/4', '13/16', '7/8', '15/16']}
                         placeholder="Fraction"
                         value={heightFraction}
                         onChange={e => {

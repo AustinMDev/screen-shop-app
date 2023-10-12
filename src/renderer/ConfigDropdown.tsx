@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
-import { elementSKUs, sizePrices, screenPricing, splinePricing, spreaderBarPricing, extrasPricing, hawaiiTaxRate  } from '../config'; // Path to your config file
 
 interface ConfigDropdownProps {
   placeholder?: string;
@@ -30,7 +29,7 @@ const ConfigDropdown: React.FC<ConfigDropdownProps> = ({ placeholder, value, onC
       onChange(selectedOption); // Passing the whole selected option
     }
   };
-  
+
 
   return (
     <Select
@@ -39,7 +38,7 @@ const ConfigDropdown: React.FC<ConfigDropdownProps> = ({ placeholder, value, onC
       value={options.find(option => option.value === selectedItem)}
       onChange={handleChange}
       menuPortalTarget={document.body} // This makes the dropdown options appear above all other elements
-      styles={{ 
+      styles={{
         ...styles,
         menuPortal: base => ({ ...base, zIndex: 9999 }) // Adjusts the z-index of the dropdown to be on top
       }}

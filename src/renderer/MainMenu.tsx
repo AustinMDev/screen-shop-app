@@ -15,6 +15,10 @@ const MainMenu: React.FC = () => {
         // Here you can navigate to the re-screening page, or do any other setup required
     };
 
+    const handleConfig = () => {
+      navigate('/ConfigMenu');
+    }
+
     return (
         <div>
             <div className="header">
@@ -26,13 +30,11 @@ const MainMenu: React.FC = () => {
             <div className="app-container">
                 <div className="menu">
                     <div className="new-screen-menu">
-                        <Button onClick={handleNewScreen} text="New Screen"/>
-                        <h2>- test</h2>
+                        <Button onClick={handleNewScreen} text="New Screen"/> 
                     </div>
-                    <div className="rescreening-menu">
-                        <Button onClick={handleReScreening} text="Re-Screening"/>
-                        <h2>- test</h2>
-                    </div>
+                </div>
+                <div className="config">
+                    <Button onClick={handleConfig} text="Config"/>
                 </div>
             </div>
         </div>

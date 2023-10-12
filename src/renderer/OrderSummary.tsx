@@ -1,16 +1,15 @@
-import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom';
-import { generatePDF } from './PDFGenerator';
-import Button from "./Button";
-import TextField from "./TextField";
-import DropdownInput from "./DropdownText";
-import ConfigDropdown from "./ConfigDropdown";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
-import { elementSKUs, sizePrices, screenPricing, splinePricing, spreaderBarPricing, pullTabPricing, springPricing, spreaderBarClip, clipSprings, screenClips, hawaiiTaxRate  } from '../config';
-import NumberField from "./NumberField";
+  import { useNavigate } from 'react-router-dom';
+  import { generatePDF } from './PDFGenerator';
+  import Button from "./Button";
+  import TextField from "./TextField";
+  import DropdownInput from "./DropdownText";
+  import ConfigDropdown from "./ConfigDropdown";
+  import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+  import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons'
+  import config from '../../config/config.json';
+  import NumberField from "./NumberField";
 
-const OrderSummary = ({
+  const OrderSummary = ({
   order,
   editScreen,
   deleteScreen,
@@ -30,10 +29,9 @@ const OrderSummary = ({
   clipSpring,
   setClipSpring,
   spreaderBarClips,
-  setSpreaderBarClips,
   comment,
   setComment,
-}) => {
+  }) => {
 
   const navigate = useNavigate();
 
@@ -44,10 +42,10 @@ const OrderSummary = ({
   const handlePrint = () => {
   const orderDetails = generateOrderDetails();
 
-  const selectedClip = screenClips.find(clip => clip.label === selectedScreenClip);
+  const selectedClip = config.additionalPrices.screenClips.find(clip => clip.label === selectedScreenClip);
   const clipExtendedPrice = selectedClip ? (selectedClip.price * screenClipNumber) : 0;
 
-    // Create a screen clip order object
+  // Create a screen clip order object
   const screenClipOrder = [];
     if (selectedClip && screenClipNumber > 0) {
         screenClipOrder.push({
@@ -59,7 +57,8 @@ const OrderSummary = ({
         });
   }
 
-  const clipSpringOrder = clipSprings
+  // Create a clip spring order object
+  const clipSpringOrder = config.additionalPrices.clipSprings
     .filter(item => clipSpring > 0)
     .map(item => ({
       sku: item.sku,
@@ -69,7 +68,8 @@ const OrderSummary = ({
       extendedPrice: item.price * clipSpring
     }));
 
-  const spreaderBarClipOrder = spreaderBarClip
+  // Create a spreader bar clip order object
+  const spreaderBarClipOrder = config.additionalPrices.spreaderBarClip
     .filter(item => spreaderBarClips > 0)
     .map(item => ({
       sku: item.sku,
@@ -79,8 +79,7 @@ const OrderSummary = ({
       extendedPrice: item.price * spreaderBarClips
     }));
 
-
-
+  // Combine all orders into one array
   const pricingOrdersForPdf = [
     ...screenClipOrder,
     ...clipSpringOrder,
@@ -99,9 +98,9 @@ const OrderSummary = ({
   const dropdownStyle = {
     control: (base) => ({
       ...base,
-      width: 'auto', // Set the width as you need
-      height: '30px', // Set the height as you need
-      color: 'black', // Change color of the control
+      width: 'auto', 
+      height: '30px',
+      color: 'black', 
     }),
     option: (styles, { isFocused, isSelected }) => ({
       ...styles,
@@ -124,7 +123,7 @@ const OrderSummary = ({
       console.log(screen.frameType);
       const frameTypeCategory = frameTypeIsBox(screen.frameType) ? "Box" : "Lip";
       console.log(frameTypeCategory);
-      const price = sizePrices[frameTypeCategory][sizeSKU];
+      const price = config.sizePrices[frameTypeCategory][sizeSKU];
 
       return {
         sku,
@@ -138,7 +137,7 @@ const OrderSummary = ({
       return frameType.includes("Box");
   };
 
-
+  
   const generateSKU = (order) => {
     const { frameColor, splineType, frameType, width, height } = order;
     const totalSize = parseInt(width) + parseInt(height);
@@ -150,9 +149,9 @@ const OrderSummary = ({
     else if (totalSize <= 132) sizeSKU = '132';
     else if (totalSize > 132) sizeSKU = '132';
 
-    const colorSKU = elementSKUs.frameColor[frameColor] || '';
-    const splineTypeSKU = elementSKUs.splineType[splineType] || '';
-    const frameTypeSKU = elementSKUs.frameType[frameType] || '';
+    const colorSKU = config.elementSKUs.frameColor[frameColor] || '';
+    const splineTypeSKU = config.elementSKUs.splineType[splineType] || '';
+    const frameTypeSKU = config.elementSKUs.frameType[frameType] || '';
 
     const sku = colorSKU + splineTypeSKU + frameTypeSKU + sizeSKU;
 
@@ -254,7 +253,7 @@ const OrderSummary = ({
                       placeholder="Select Screen Clip"
                       value={selectedScreenClip}
                       onChange={(option) => setSelectedScreenClip(option)}
-                      optionsData={screenClips}
+                      optionsData={config.additionalPrices.screenClips}
                       styles={dropdownStyle}
                 />
               <NumberField
@@ -268,14 +267,6 @@ const OrderSummary = ({
                 value={clipSpring}
                 min={0}
                 onChange={(e) => setClipSpring(e.target.value)}
-              />
-            </div>
-            <div className="add-on-field">
-              <label>Spreader Bar Clips: </label>
-              <NumberField
-                value={spreaderBarClips}
-                min={0}
-                onChange={(e) => setSpreaderBarClips(e.target.value)}
               />
             </div>
             <div className="comment-box">
@@ -303,6 +294,6 @@ const OrderSummary = ({
       </div>
     </div>
   );
-};
+  };
 
-export default OrderSummary;
+  export default OrderSummary;

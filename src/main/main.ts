@@ -9,11 +9,16 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import fs from 'fs';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import { Mutex } from 'async-mutex';
+import _ from 'lodash';
+
+const mutex = new Mutex();
 
 class AppUpdater {
   constructor() {
@@ -23,6 +28,37 @@ class AppUpdater {
   }
 }
 
+// Define the paths
+const appPath = app.isPackaged ? path.dirname(app.getPath('exe')) : __dirname;
+const configPath = path.join(appPath, 'config.js');
+
+const userConfigPath = path.join(app.getPath('userData'), 'config.js');
+if (!fs.existsSync(userConfigPath)) {
+  fs.copyFileSync(configPath, userConfigPath);
+}
+
+
+app.on('ready', () => {
+  autoUpdater.setFeedURL({
+    provider: 'github',
+    repo: 'screen-shop-app',
+    owner: 'AustinMDev'
+  });
+
+  autoUpdater.checkForUpdatesAndNotify();
+});
+
+autoUpdater.on('update-available', () => {
+  dialog.showMessageBox({
+    type: 'info',
+    title: 'Update Available',
+    message: 'A new version is available. Do you want to update now?',
+    buttons: ['Yes', 'No']
+  });
+  // Handle user response
+});
+
+
 let mainWindow: BrowserWindow | null = null;
 
 ipcMain.on('ipc-example', async (event, arg) => {
@@ -30,6 +66,59 @@ ipcMain.on('ipc-example', async (event, arg) => {
   console.log(msgTemplate(arg));
   event.reply('ipc-example', msgTemplate('pong'));
 });
+
+const updateConfig = async (updateFn) => {
+  const release = await mutex.acquire();
+  try {
+    const filePath = path.join(__dirname, '../../config/config.json');
+    const data = fs.readFileSync(filePath, 'utf-8');
+    let json = JSON.parse(data);
+
+    const retainSections = {
+      elementSKUs: json.elementSKUs,
+      sizeLabels: json.sizeLabels,
+    };
+    // Update JSON data using the update function passed as an argument
+    const updatedJson = updateFn(json);
+
+    delete updatedJson.elementSKUs;
+    delete updatedJson.sizeLabels;
+
+    // Merge with existing data to prevent overwriting
+    json = {...retainSections, sizePrices: updatedJson.sizePrices, additionalPrices: updatedJson };
+
+    // Write back to file
+    fs.writeFileSync(filePath, JSON.stringify(json, null, 2));
+  } catch (error) {
+    console.error('Error during config update:', error);
+  } finally {
+    release();
+  }
+};
+
+
+
+ipcMain.on('save-changes', async (event, data) => {
+  await updateConfig(() => {
+    return { ...data };
+  });
+  event.reply('save-changes-reply', 'Data saved successfully');
+});
+
+
+// For other updates, for example, to update 'screenPricing':
+const updateScreenPricing = async () => {
+  await updateConfig((json) => {
+    json['screenPricing'].push({
+      label: 'New Label',
+      sku: 'New SKU',
+      price: 'New Price',
+      description: 'New Description',
+    });
+    return json;
+  });
+};
+
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');

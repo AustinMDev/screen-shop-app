@@ -1,6 +1,6 @@
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-import { elementSKUs, sizePrices, screenPricing, splinePricing, spreaderBarPricing, pullTabPricing, springPricing, spreaderBarClip, clipSpring, screenClips, hawaiiTaxRate  } from '../config';
+import { spreaderBarPricing, pullTabPricing, springPricing, hawaiiTaxRate  } from '../config';
 
 
 const currentDate: Date = new Date();
@@ -28,205 +28,209 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 export const generatePDF = async (screenOrders, orderDetails, customerName, customerPhone, estimatedPickup, employeeName, comment, screenClipOrder) => {
 
-  let emptyOrder = { id: '\n\n', frameColor: '', frameType: '', frameSize: '', screenType: '', width: '', widthFraction: '', height: '', heightFraction: '', quantity: '' };
-  let paddedScreenOrders = [...screenOrders];
+    let emptyOrder = { id: '\n\n', frameColor: '', frameType: '', frameSize: '', screenType: '', width: '', widthFraction: '', height: '', heightFraction: '', quantity: '' };
+    let paddedScreenOrders = [...screenOrders];
 
-  // Fill up to 4 rows
-  while (paddedScreenOrders.length < 4) {
-      paddedScreenOrders.push(emptyOrder);
-  }
+    // Fill up to 4 rows
+    while (paddedScreenOrders.length < 4) {
+        paddedScreenOrders.push(emptyOrder);
+    }
 
-  let tableBody = [
-      [
-          { text: '#:', alignment: 'center', bold: true },
-          { text: 'Type:', bold: true },
-          { text: 'Screen:', bold: true },
-          { text: 'Dimensions:\n Width X Height', bold: true },
-          { text: 'QTY:', alignment: 'center', bold: true }
-      ],
-  ];
+    let tableBody = [
+        [
+            { text: '#:', alignment: 'center', bold: true },
+            { text: 'Type:', bold: true },
+            { text: 'Screen:', bold: true },
+            { text: 'Dimensions:\n Width X Height', bold: true },
+            { text: 'QTY:', alignment: 'center', bold: true }
+        ],
+    ];
 
-  const getPullTabItem = (order) => {
-      const pullTab = pullTabPricing.find(pt => pt.label === order.pullTab);
-      if (pullTab) {
-          const qty = order.pullTabQty * order.quantity;
-          const extendedPrice = pullTab.price * qty;
-          return {
-              sku: pullTab.sku,
-              qty,
-              description: pullTab.description,
-              price: pullTab.price,
-              extendedPrice
-          };
-      }
-      return null;
-  };
+    // Get the pullTab item for the order
+    const getPullTabItem = (order) => {
+        const pullTab = pullTabPricing.find(pt => pt.label === order.pullTab);
+        if (pullTab) {
+            const qty = order.pullTabQty * order.quantity;
+            const extendedPrice = pullTab.price * qty;
+            return {
+                sku: pullTab.sku,
+                qty,
+                description: pullTab.description,
+                price: pullTab.price,
+                extendedPrice
+            };
+        }
+        return null;
+    };
 
-  let pullTabItemsMap = new Map();
-  for (let order of screenOrders) {
-      const pullTabItem = getPullTabItem(order);
-      if (pullTabItem) {
-          const existingItem = pullTabItemsMap.get(pullTabItem.description);
-          if (existingItem) {
-              existingItem.qty += pullTabItem.qty;
-              existingItem.extendedPrice += pullTabItem.extendedPrice;
-          } else {
-              pullTabItemsMap.set(pullTabItem.description, pullTabItem);
-          }
-      }
-  }
+    let pullTabItemsMap = new Map();
+    for (let order of screenOrders) {
+        const pullTabItem = getPullTabItem(order);
+        if (pullTabItem) {
+            const existingItem = pullTabItemsMap.get(pullTabItem.description);
+            if (existingItem) {
+                existingItem.qty += pullTabItem.qty;
+                existingItem.extendedPrice += pullTabItem.extendedPrice;
+            } else {
+                pullTabItemsMap.set(pullTabItem.description, pullTabItem);
+            }
+        }
+    }
 
-  // Convert Map to array
-  let pullTabItems = Array.from(pullTabItemsMap.values());
+    // Convert Map to array
+    let pullTabItems = Array.from(pullTabItemsMap.values());
 
-  const getSpringItem = (order) => {
-      const springItem = springPricing[0];
-      if (springItem) {
-          const qty = order.springQty * order.quantity;
-          const extendedPrice = springItem.price * qty;
-          return {
-              sku: springItem.sku,
-              qty,
-              description: springItem.description,
-              unitPrice: springItem.price,
-              extendedPrice
-          };
-      }
-      return null;
-  };
+    // Get the spring item for the order
+    const getSpringItem = (order) => {
+        const springItem = springPricing.find(s => s.label === order.spring);
+        if (springItem) {
+            const qty = order.springQty * order.quantity;
+            const extendedPrice = springItem.price * qty;
+            return {
+                sku: springItem.sku,
+                qty,
+                description: springItem.description,
+                unitPrice: springItem.price,
+                extendedPrice
+            };
+        }
+        return null;
+    };
 
-  let springItems = [];
-  let totalSpringQty = 0;
+    let springItems = [];
+    let totalSpringQty = 0;
 
-  for (let order of screenOrders) {
-      const springItem = getSpringItem(order);
-      if (springItem) {
-          // Check if the item is already in the array and update qty and extendedPrice if found
-          const existingItem = springItems.find(item => item.sku === springItem.sku);
-          if (existingItem) {
-              existingItem.qty += springItem.qty;
-              existingItem.extendedPrice += springItem.extendedPrice;
-          } else {
-              springItems.push(springItem);
-          }
-          totalSpringQty += springItem.qty;
-      }
-  }
+    for (let order of screenOrders) {
+        const springItem = getSpringItem(order);
+        if (springItem) {
+            // Check if the item is already in the array and update qty and extendedPrice if found
+            const existingItem = springItems.find(item => item.sku === springItem.sku);
+            if (existingItem) {
+                existingItem.qty += springItem.qty;
+                existingItem.extendedPrice += springItem.extendedPrice;
+            } else {
+                springItems.push(springItem);
+            }
+            totalSpringQty += springItem.qty;
+        }
+    }
 
-  const getSpreaderBarItem = (orders, spreaderBarPricing) => {
-      let totalWidth = 0;
+    // Add the spring item to the pricing table if there is at least one spring
+    const getSpreaderBarItem = (orders, spreaderBarPricing) => {
+        let totalWidth = 0;
 
-      // Iterate through the orders to calculate total width
-      for (let order of orders) {
-          if (order.spreaderBar) {
-              const smallestDimension = Math.min(order.width, order.height);
-              totalWidth += smallestDimension * order.quantity;
-          }
-      }
+        // Iterate through the orders to calculate total width
+        for (let order of orders) {
+            if (order.spreaderBar) {
+                const smallestDimension = Math.min(order.width, order.height);
+                totalWidth += smallestDimension * order.quantity;
+            }
+        }
 
-      // Calculate the spreaderBarQty
-      const spreaderBarQty = Math.ceil(totalWidth / 144);
+        // Calculate the spreaderBarQty
+        const spreaderBarQty = Math.ceil(totalWidth / 144);
 
-      if (spreaderBarQty > 0) {
-          // Assuming the frameColor of the first order with spreaderBar is representative for all orders
-          const frameColor = orders.find(order => order.spreaderBar)?.frameColor;
-          const spreaderBar = spreaderBarPricing[frameColor];
-          return {
-              sku: spreaderBar.sku,
-              qty: spreaderBarQty,
-              description: frameColor + ' Spreader Bars',
-              unitPrice: spreaderBar.price,
-              extendedPrice: spreaderBar.price * spreaderBarQty
-          };
-      }
-      return null;
-  };
+        if (spreaderBarQty > 0) {
+            // Get the frameColor from the first order that has a spreaderBar
+            const frameColor = orders.find(order => order.spreaderBar)?.frameColor;
+            const spreaderBar = spreaderBarPricing.find(item => item.label === frameColor);
+            return {
+                sku: spreaderBar.sku,
+                qty: spreaderBarQty,
+                description: frameColor + ' Spreader Bars',
+                unitPrice: spreaderBar.price,
+                extendedPrice: spreaderBar.price * spreaderBarQty
+            };
+        }
+        return null;
+    };
 
-  // Usage
-  const spreaderBarItem = getSpreaderBarItem(screenOrders, spreaderBarPricing);
-  const spreaderBarArray = spreaderBarItem ? [spreaderBarItem] : [];
-
-
-  for (let order of paddedScreenOrders) {
-      let row = [];
-      console.log(order);
-      row.push({ text: order.id.toString() || ' ', alignment: 'center' });
-
-      let frameText = (order.frameColor + " " + order.frameType);
-      row.push(frameText || ' ');
-
-      row.push(order.screenType || ' ');
-
-      let dimensionsText = (order.width && order.width !== '' && order.widthFraction && order.widthFraction !== '' && order.height && order.height !== '' && order.heightFraction && order.heightFraction !== '') ? `${order.width} - ${order.widthFraction}" X ${order.height} - ${order.heightFraction}"` : '';
-      row.push(dimensionsText || ' ');
-
-      row.push({ text: order.quantity.toString() || ' ', alignment: 'center' });
-      tableBody.push(row);
-  }
-
-  // Assuming orderDetails is an array of objects with keys: sku, qty, unitPrice
-  // And extendedPrice is computed as qty * unitPrice
-  // Merge screenDetails with orderDetails for pricing table
-  let pricingOrdersForPdf = [...orderDetails, ...pullTabItems, ...springItems, ...spreaderBarArray, ...screenClipOrder].map(order => ({
-      sku: order.sku || '',
-      qty: order.qty || '',
-      description: order.description || 'Screen Kit',
-      unitPrice: order.unitPrice || order.price || '',
-      extendedPrice: (order.unitPrice * order.qty) || (order.price * order.qty) || ''
-  }));
+    // Usage
+    const spreaderBarItem = getSpreaderBarItem(screenOrders, spreaderBarPricing);
+    const spreaderBarArray = spreaderBarItem ? [spreaderBarItem] : [];
 
 
-  // Ensure there are at least 6 rows
-  while (pricingOrdersForPdf.length < 6) {
-      pricingOrdersForPdf.push({ sku: '', qty: '', description: '', unitPrice: '', extendedPrice: '' });
-  }
+    for (let order of paddedScreenOrders) {
+        let row = [];
+        console.log(order);
+        row.push({ text: order.id.toString() || ' ', alignment: 'center' });
 
-  let tablePricing = [
-      [
-          { text: 'SKU', bold: true, alignment: 'center' },
-          { text: 'QTY', bold: true, alignment: 'center' },
-          { text: 'DESCRIPTION', bold: true, alignment: 'center' },
-          { text: 'UNIT PRICE', bold: true, alignment: 'center' },
-          { text: 'EXTENDED PRICE', bold: true, alignment: 'center' }
-      ],
-  ];
+        let frameText = (order.frameColor + " " + order.frameType);
+        row.push(frameText || ' ');
 
-  // For tablePricing
-  for (let order of pricingOrdersForPdf) {
-      let row = [];
-      row.push({ text: (order.sku ? order.sku.toString() : ' '), alignment: 'center' });
-      row.push({ text: (order.qty ? order.qty.toString() : ' '), alignment: 'center' });
-      row.push({ text: order.description || ' ', alignment: 'center' });
-      row.push({ text: (order.unitPrice ? order.unitPrice.toFixed(2).toString() : ' '), alignment: 'center' });
-      row.push({ text: (order.extendedPrice ? order.extendedPrice.toFixed(2).toString() : ' '), alignment: 'center' });
-      tablePricing.push(row);
-  }
+        row.push(order.screenType || ' ');
 
-  let userInfo = {
-      name: customerName,
-      phone_number: customerPhone,
-      alt_phone_number: '',
-      employee_name: employeeName,
-      purchase_date: `${month}/${day}/${year}`,
-      pickup_date: estimatedPickup
-  }
+        let dimensionsText = (order.width && order.width !== '' && order.widthFraction && order.widthFraction !== '' && order.height && order.height !== '' && order.heightFraction && order.heightFraction !== '') ? `${order.width} - ${order.widthFraction}" X ${order.height} - ${order.heightFraction}"` : '';
+        row.push(dimensionsText || ' ');
 
-  comment = comment + '\n\n';
-  console.log(screenOrders);
+        row.push({ text: order.quantity.toString() || ' ', alignment: 'center' });
+        tableBody.push(row);
+    }
 
-  // Calculate the total price without tax
-  const estimatedTotal = pricingOrdersForPdf.reduce((total, order) => {
+    // Assuming orderDetails is an array of objects with keys: sku, qty, unitPrice
+    // And extendedPrice is computed as qty * unitPrice
+    // Merge screenDetails with orderDetails for pricing table
+    let pricingOrdersForPdf = [...orderDetails, ...pullTabItems, ...springItems, ...spreaderBarArray, ...screenClipOrder].map(order => ({
+        sku: order.sku || '',
+        qty: order.qty || '',
+        description: order.description || 'Screen Kit',
+        unitPrice: order.unitPrice || order.price || '',
+        extendedPrice: (order.unitPrice * order.qty) || (order.price * order.qty) || ''
+    }));
+
+
+    // Ensure there are at least 6 rows
+    while (pricingOrdersForPdf.length < 6) {
+        pricingOrdersForPdf.push({ sku: '', qty: '', description: '', unitPrice: '', extendedPrice: '' });
+    }
+
+    let tablePricing = [
+        [
+            { text: 'SKU', bold: true, alignment: 'center' },
+            { text: 'QTY', bold: true, alignment: 'center' },
+            { text: 'DESCRIPTION', bold: true, alignment: 'center' },
+            { text: 'UNIT PRICE', bold: true, alignment: 'center' },
+            { text: 'EXTENDED PRICE', bold: true, alignment: 'center' }
+        ],
+    ];
+
+    // Add the pricing orders to the pricing table
+    for (let order of pricingOrdersForPdf) {
+        let row = [];
+        row.push({ text: (order.sku ? order.sku.toString() : ' '), alignment: 'center' });
+        row.push({ text: (order.qty ? order.qty.toString() : ' '), alignment: 'center' });
+        row.push({ text: order.description || ' ', alignment: 'center' });
+        row.push({ text: (order.unitPrice ? order.unitPrice.toFixed(2).toString() : ' '), alignment: 'center' });
+        row.push({ text: (order.extendedPrice ? order.extendedPrice.toFixed(2).toString() : ' '), alignment: 'center' });
+        tablePricing.push(row);
+    }
+
+    let userInfo = {
+        name: customerName,
+        phone_number: customerPhone,
+        alt_phone_number: '',
+        employee_name: employeeName,
+        purchase_date: `${month}/${day}/${year}`,
+        pickup_date: estimatedPickup
+    }
+
+    comment = comment + '\n\n';
+    console.log(screenOrders);
+
+    // Calculate the total price without tax
+    const estimatedTotal = pricingOrdersForPdf.reduce((total, order) => {
     const extendedPrice = parseFloat(order.extendedPrice) || 0; // Ensure it's a number
     return total + extendedPrice;
-  }, 0);
+    }, 0);
 
-  // Calculate the total price with Hawaii tax
-  const hawaiiTax = hawaiiTaxRate * estimatedTotal;
-  const totalWithTax = estimatedTotal + hawaiiTax;
+    // Calculate the total price with Hawaii tax
+    const hawaiiTax = hawaiiTaxRate * estimatedTotal;
+    const totalWithTax = estimatedTotal + hawaiiTax;
 
-  console.log(estimatedTotal);
-  console.log(totalWithTax);
+    console.log(estimatedTotal);
+    console.log(totalWithTax);
 
+    // Create the PDF
     let docDefinition = {
 
         content: [
@@ -292,19 +296,19 @@ export const generatePDF = async (screenOrders, orderDetails, customerName, cust
                               widths: ['*', 90, 70],
                               body: [
                                   [
-                                      { text: '', border: [false, false, false, false] }, // Empty cell without borders
+                                      { text: '', border: [false, false, false, false] }, 
                                       { text: 'Estimated Total:', alignment: 'right', bold: true },
                                       { text: `$${estimatedTotal.toFixed(2)}`, alignment: 'center', bold: true }
                                   ],
                                   [
-                                      { text: '', border: [false, false, false, false] }, // Empty cell without borders
+                                      { text: '', border: [false, false, false, false] }, 
                                       { text: 'Including Tax:', alignment: 'right', bold: true },
                                       { text: `$${totalWithTax.toFixed(2)}`, alignment: 'center', bold: true }
                                   ]
                               ],
                               layout: {
                                   hLineWidth: function (i, node) {
-                                      return (i === 0 || i === node.table.body.length) ? 2 : 1; // Add thicker line above and below the table
+                                      return (i === 0 || i === node.table.body.length) ? 2 : 1; 
                                   },
                                   vLineWidth: function (i, node) {
                                       return 0;
@@ -315,7 +319,7 @@ export const generatePDF = async (screenOrders, orderDetails, customerName, cust
                               }
                           }
                       },
-                        { text: 'My signature above signifies that I have read & understand the above order & concur that the measurements & details of this order are correct.', alignment:'center' },
+                        { text: 'My signature below signifies that I have read & understand the above order & concur that the measurements & details of this order are correct.', alignment:'center' },
                         { text: 'ALL SALES ARE FINAL.', alignment: 'center', bold: true },
                         { text: 'A Sales Associate will contact the number(s) above when my order is completed.', alignment: 'center', bold: true },
                         {

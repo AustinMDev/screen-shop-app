@@ -14,6 +14,14 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+const { contextBridge, ipcRenderer } = require('electron');
+const fs = require('fs');
+
+contextBridge.exposeInMainWorld('electron', {
+  fs: fs,
+  app: require('electron').app,
+  BrowserWindow: require('electron').BrowserWindow
+});
 
 class AppUpdater {
   constructor() {
@@ -75,6 +83,8 @@ const createWindow = async () => {
     height: 1024,
     icon: getAssetPath('icon.png'),
     webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
