@@ -28,15 +28,6 @@ class AppUpdater {
   }
 }
 
-// Define the paths
-const appPath = app.isPackaged ? path.dirname(app.getPath('exe')) : __dirname;
-const configPath = path.join(appPath, 'config.js');
-
-const userConfigPath = path.join(app.getPath('userData'), 'config.js');
-if (!fs.existsSync(userConfigPath)) {
-  fs.copyFileSync(configPath, userConfigPath);
-}
-
 
 app.on('ready', () => {
   autoUpdater.setFeedURL({
