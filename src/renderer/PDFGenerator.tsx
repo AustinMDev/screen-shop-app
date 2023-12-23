@@ -133,14 +133,16 @@ export const generatePDF = async (screenOrders, orderDetails, customerName, cust
         if (spreaderBarQty > 0) {
             // Get the frameColor from the first order that has a spreaderBar
             const frameColor = orders.find(order => order.spreaderBar)?.frameColor;
-            const spreaderBar = spreaderBarPricing.find(item => item.label === frameColor);
-            return {
-                sku: spreaderBar.sku,
-                qty: spreaderBarQty,
-                description: frameColor + ' Spreader Bars',
-                unitPrice: spreaderBar.price,
-                extendedPrice: spreaderBar.price * spreaderBarQty
-            };
+            const spreaderBar = spreaderBarPricing[frameColor]; 
+            if (spreaderBar) {
+                return {
+                    sku: spreaderBar.sku,
+                    qty: spreaderBarQty,
+                    description: frameColor + ' Spreader Bars',
+                    unitPrice: spreaderBar.price,
+                    extendedPrice: spreaderBar.price * spreaderBarQty
+                };
+            }
         }
         return null;
     };
